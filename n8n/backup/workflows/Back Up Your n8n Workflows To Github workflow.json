@@ -1,0 +1,284 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "n8n": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Failed Flows": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Call 'Back Up Your n8n Workflows To Github subworkflow'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Starting Message": {
+      "main": [
+        []
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-12-09T05:39:19.987Z",
+  "id": "CXw5TEGK3yMmrWdw",
+  "isArchived": false,
+  "meta": {
+    "templateId": "1534"
+  },
+  "name": "Back Up Your n8n Workflows To Github workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8ff84b51-539d-42ae-9200-3ee46aab4776",
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        848,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "returnAll": false,
+        "limit": 1,
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "6124f4d1-c3e1-48d4-ba14-4d79526cbada",
+      "name": "n8n",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        1248,
+        432
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "XoP9QsVPwIyLja7M",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "359e265c-021c-4f21-8f89-e79c360fd6d8",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        1456,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1,
+              "triggerAtMinute": 33
+            }
+          ]
+        }
+      },
+      "id": "986fbfe1-6a77-47ba-a6c2-a81cbe8ba690",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        848,
+        528
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "## Backup to GitHub \nThis workflow will backup all instance workflows to GitHub every 24 hours.\n\nThe files are saved into folders using `YYYY/MM/` for the directory path and `ID.json` for the filename.\n\nThe Repo Owner, Repo Name and Main folder are set using the **Variables** feature but can be replaced with the `Config` node in the subworkflow. \n\nThe workflow runs calls itself to help reduce memory usage, Once the workflow has completed it will send an optional notification to Slack.\n\n### Time to Run\nTested with 1423 workflows on `1.44.1` it took under 30 minutes for the first run and under 12 minutes once the initial run is complete.",
+        "height": 673,
+        "width": 385,
+        "color": 4
+      },
+      "id": "d49b6b4c-d64b-4121-a461-2ddbfd4db0b9",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Main workflow loop",
+        "height": 416.1856906618075,
+        "width": 1272.6408145680155,
+        "color": 7
+      },
+      "id": "65bab231-c1d4-4cb5-b518-c87e9f8179c3",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        816,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#notifications"
+        },
+        "text": "=:information_source:  Starting Workflow Backup [{{ $execution.id }}]",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "9ec3e3ea-e71f-4c3d-bb99-46d3bf82554d",
+      "name": "Starting Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        1136,
+        272
+      ],
+      "webhookId": "3ed872ce-b2bb-4f42-aa0c-6ebb9c92d902",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#notifications"
+        },
+        "text": "=✅ Backup has completed - {{ $('n8n').all().length }} workflows have been processed.",
+        "otherOptions": {}
+      },
+      "id": "00fd5b81-0d25-46ac-b2c6-7e984e186a66",
+      "name": "Completed Notification",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        1680,
+        272
+      ],
+      "webhookId": "90e2e3ef-3a86-4402-99d7-30d192d24252",
+      "executeOnce": true,
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#notifications"
+        },
+        "text": "=:x: Failed to backup {{ $('Loop Over Items').item.json.id }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "6a6f8e21-3671-4f34-b3ca-3f44013531e9",
+      "name": "Failed Flows",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        1920,
+        272
+      ],
+      "webhookId": "701bb0dc-86e6-4c9c-8a87-922647b425e4",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "bkA7koY1H0Di56xc",
+          "mode": "id",
+          "cachedResultUrl": "/workflow/bkA7koY1H0Di56xc"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1664,
+        528
+      ],
+      "id": "04b562c3-df7c-4ec1-b4ab-6ab64674f197",
+      "name": "Call 'Back Up Your n8n Workflows To Github subworkflow'"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n",
+  "repo_owner": "marcdhansen",
+  "repo_path": "workflows/",
+  "settings": {},
+  "shared": [
+    {
+      "updatedAt": "2025-12-09T05:39:19.987Z",
+      "createdAt": "2025-12-09T05:39:19.987Z",
+      "role": "workflow:owner",
+      "workflowId": "CXw5TEGK3yMmrWdw",
+      "projectId": "RJ3TkXpBIa614W75"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-12-09T05:40:39.217Z",
+  "versionId": "7e3f0af7-b3b3-445c-961f-d974a78cad0f"
+}
